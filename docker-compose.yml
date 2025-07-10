@@ -1,0 +1,28 @@
+version: "3.3"
+
+services:
+  ftp_vuln:
+    image: docker.io/fauria/vsftpd
+    container_name: ftp_vuln
+    restart: always
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"  # Puertos para modo PASIVO
+    environment:
+      - FTP_USER=ftpuser
+      - FTP_PASS=ftppass
+      - PASV_ADDRESS=127.0.0.1
+      - PASV_MIN_PORT=21100
+      - PASV_MAX_PORT=21110
+      - LOG_STDOUT=1
+    volumes:
+      - ./ftpdata:/home/vsftpd
+
+  apache_vuln:
+    image: php:8.2-apache
+    container_name: apache_vuln
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./ftpdata/ftpuser:/var/www/html
